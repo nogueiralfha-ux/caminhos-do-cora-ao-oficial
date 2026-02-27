@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caminhos do Coração: Devocional Diário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --orange-vibrant: #FF8C00;
+            --black-ink: #111111;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--black-ink);
+            color: white;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4, .font-serif {
+            font-family: 'Merriweather', serif;
+        }
+        .bg-gold { background-color: var(--gold); }
+        .text-gold { color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
+        .bg-orange-vibrant { background-color: var(--orange-vibrant); }
+        .border-orange-vibrant { border-color: var(--orange-vibrant); }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hidden { display: none; }
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Som do Shofar Visual Feedback */
+        .shofar-active {
+            box-shadow: inset 0 0 50px var(--gold), 0 0 50px var(--gold);
+            transition: box-shadow 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-6 md:p-8 flex flex-col items-center">
+
+    <!-- Audio Element for Shofar -->
+    <audio id="shofar-audio" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <main class="w-full max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col items-center text-center mb-10">
+            <div class="mb-6 transform hover:scale-105 transition-transform duration-500 cursor-pointer" onclick="showView('dashboard')">
+                <img 
+                    src="https://images.squarespace-cdn.com/content/v1/5e3b0923e59591459483324c/1581452140662-M1W5O7G5R3S3S7W9E6G7/Missio+Dei+Logo.png" 
+                    alt="Missio Dei Logo" 
+                    class="h-24 md:h-32 object-contain drop-shadow-xl invert brightness-200"
+                >
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold text-white font-serif tracking-tight">Caminhos do Coração</h1>
+            <div class="h-1 w-24 bg-gold my-4 rounded-full"></div>
+            <p class="text-lg text-gray-400 font-light italic">Inspiração e comunhão através da Missio Dei</p>
+        </header>
+
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+            <!-- Card Devocional -->
+            <div onclick="showView('devotional')" class="group bg-neutral-900 p-5 rounded-3xl shadow-2xl border-t-8 border-white hover:border-orange-vibrant transition-all duration-500 text-center flex flex-col items-center cursor-pointer">
+                <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-white font-serif mb-1">Devocional</h2>
+                <p class="text-gray-400 text-xs mb-3 flex-grow">Reflexão por tema.</p>
+                <span class="px-4 py-1.5 bg-orange-vibrant text-white rounded-full text-[10px] font-bold group-hover:px-6 transition-all shadow-lg">Começar</span>
+            </div>
+
+            <!-- Card Leitura Bíblica -->
+            <div onclick="startDailyReading()" class="group bg-neutral-900 p-5 rounded-3xl shadow-2xl border-t-8 border-orange-vibrant hover:border-gold transition-all duration-500 text-center flex flex-col items-center cursor-pointer">
+                <div class="w-14 h-14 bg-orange-vibrant/10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-orange-vibrant" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-white font-serif mb-1">Leitura</h2>
+                <p class="text-gray-400 text-xs mb-3 flex-grow">Texto e ensino.</p>
+                <span class="px-4 py-1.5 bg-white text-black rounded-full text-[10px] font-bold group-hover:px-6 transition-all shadow-lg">Ler</span>
+            </div>
+
+            <!-- Card Desafio Bíblico -->
+            <div onclick="startBibleChallenge()" class="group bg-neutral-900 p-5 rounded-3xl shadow-2xl border-t-8 border-emerald-500 hover:border-gold transition-all duration-500 text-center flex flex-col items-center cursor-pointer">
+                <div class="w-14 h-14 bg-emerald-500/10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-white font-serif mb-1">Desafio</h2>
+                <p class="text-gray-400 text-xs mb-3 flex-grow">Missão espiritual.</p>
+                <span class="px-4 py-1.5 bg-emerald-500 text-white rounded-full text-[10px] font-bold group-hover:px-6 transition-all shadow-lg">Aceitar</span>
+            </div>
+
+            <!-- Card Shema -->
+            <div onclick="openShema()" class="group bg-neutral-900 p-5 rounded-3xl shadow-2xl border-t-8 border-gold hover:border-orange-vibrant transition-all duration-500 text-center flex flex-col items-center cursor-pointer">
+                <div class="w-14 h-14 bg-gold/20 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-gold font-serif mb-1">SHEMÁ</h2>
+                <p class="text-gray-400 text-xs mb-3 flex-grow">Perguntas e Respostas.</p>
+                <span class="px-4 py-1.5 bg-gold text-white rounded-full text-[10px] font-bold group-hover:px-6 transition-all shadow-lg">Ouvir</span>
+            </div>
+        </div>
+
+        <!-- Devotional View -->
+        <div id="devotional-view" class="hidden animate-fade-in">
+            <button onclick="showView('dashboard')" class="mb-6 flex items-center text-white font-bold hover:text-orange-vibrant transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Voltar ao Início
+            </button>
+
+            <div class="bg-neutral-900 rounded-2xl shadow-2xl p-6 md:p-8 mb-10 border-t-4 border-white">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input
+                        type="text"
+                        id="devotional-theme"
+                        placeholder="Qual o tema da sua busca hoje? (ex: Paz, Força, Família)"
+                        class="flex-grow w-full px-5 py-4 border-2 border-neutral-800 rounded-xl focus:outline-none focus:border-orange-vibrant transition-all duration-300 bg-black text-white"
+                    >
+                    <button
+                        onclick="generateDevotional()"
+                        id="generate-btn"
+                        class="w-full sm:w-auto flex items-center justify-center px-8 py-4 bg-orange-vibrant text-white font-bold rounded-xl hover:bg-orange-600 hover:shadow-lg transition-all duration-300 transform active:scale-95 whitespace-nowrap shadow-md"
+                    >
+                        <span id="btn-text">Gerar Devocional</span>
+                        <div id="btn-loader" class="loader hidden ml-2"></div>
+                    </button>
+                </div>
+                <p id="error-msg" class="text-red-400 mt-4 text-center font-medium hidden"></p>
+            </div>
+
+            <div id="devotional-result" class="space-y-8 max-w-3xl mx-auto hidden">
+                <!-- Result will be injected here -->
+            </div>
+        </div>
+
+        <!-- Reading View -->
+        <div id="reading-view" class="hidden animate-fade-in">
+            <button onclick="showView('dashboard')" class="mb-6 flex items-center text-white font-bold hover:text-orange-vibrant transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Voltar ao Início
+            </button>
+
+            <div id="reading-loading" class="text-center py-20">
+                <div class="loader mx-auto mb-4 w-12 h-12 border-4"></div>
+                <p class="text-gold font-serif text-xl animate-pulse">Preparando sua leitura bíblica diária...</p>
+            </div>
+
+            <div id="reading-result" class="space-y-8 max-w-3xl mx-auto hidden">
+                <!-- Reading content will be injected here -->
+            </div>
+        </div>
+
+        <!-- Challenge View -->
+        <div id="challenge-view" class="hidden animate-fade-in">
+            <button onclick="showView('dashboard')" class="mb-6 flex items-center text-white font-bold hover:text-orange-vibrant transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Voltar ao Início
+            </button>
+
+            <div id="challenge-loading" class="text-center py-20">
+                <div class="loader mx-auto mb-4 w-12 h-12 border-4"></div>
+                <p class="text-emerald-500 font-serif text-xl animate-pulse">Buscando seu desafio bíblico do dia...</p>
+            </div>
+
+            <div id="challenge-result" class="space-y-8 max-w-3xl mx-auto hidden">
+                <!-- Challenge content will be injected here -->
+            </div>
+        </div>
+        <footer class="text-center mt-12 p-8 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm">
+            <p class="text-gray-400 italic leading-relaxed">"Porque Deus amou o mundo de tal maneira..." - O propósito da Missio Dei é que todos conheçam o Seu amor.</p>
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <span class="h-px w-8 bg-neutral-800"></span>
+                <p class="text-gold font-bold tracking-widest text-sm uppercase">Caminhos do Coração &bull; Missio Dei</p>
+                <span class="h-px w-8 bg-neutral-800"></span>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">&copy; <span id="year"></span> - Todos os direitos reservados</p>
+            <button onclick="playShofar()" class="mt-4 text-[10px] text-gold/50 hover:text-gold transition-colors uppercase tracking-widest border border-gold/20 px-3 py-1 rounded-full">
+                Testar Som do Shofar
+            </button>
+        </footer>
+    </main>
+
+    <!-- Shema Modal -->
+    <div id="shema-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden animate-fade-in">
+        <div class="bg-neutral-900 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-neutral-800">
+            <header class="bg-black p-6 text-white flex justify-between items-center border-b border-neutral-800">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gold p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold font-serif">SHEMÁ</h2>
+                        <p class="text-xs text-orange-200 uppercase tracking-widest">Ouvir e Responder</p>
+                    </div>
+                </div>
+                <button onclick="closeShema()" class="p-2 hover:bg-white/10 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </header>
+
+            <div class="flex-grow overflow-y-auto p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-gray-400 uppercase tracking-wider">Sua Pergunta</label>
+                    <textarea
+                        id="shema-question"
+                        placeholder="O que inquieta seu coração hoje?"
+                        class="w-full p-4 border-2 border-neutral-800 rounded-2xl focus:outline-none focus:border-orange-vibrant transition-all resize-none h-32 text-lg bg-black text-white"
+                    ></textarea>
+                </div>
+
+                <button
+                    onclick="askShema()"
+                    id="shema-btn"
+                    class="w-full py-4 bg-orange-vibrant text-white font-bold rounded-2xl hover:bg-orange-600 transition-all shadow-lg active:scale-[0.98]"
+                >
+                    <span id="shema-btn-text">Perguntar ao Shemá</span>
+                    <div id="shema-btn-loader" class="loader hidden mx-auto"></div>
+                </button>
+
+                <div id="shema-answer-container" class="hidden animate-fade-in space-y-2">
+                    <label class="text-sm font-bold text-gold uppercase tracking-wider">Resposta do Shemá</label>
+                    <div id="shema-answer" class="bg-gold/5 p-6 rounded-2xl border border-gold/20 text-gray-200 leading-relaxed text-lg italic font-serif">
+                        <!-- Answer will be injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <footer class="p-4 bg-black text-center text-xs text-gray-500 border-t border-neutral-800">
+                "Ouve, ó Israel..." - Shemá Israel
+            </footer>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@google/genai": "https://esm.run/@google/genai"
+        }
+    }
+    </script>
+    <script type="module">
+        import { GoogleGenAI } from "@google/genai";
+
+        // Configuração da Chave de API
+        let apiKey = "YOUR_API_KEY_HERE";
+        
+        try {
+            // 1. Tenta pegar de variáveis injetadas pelo Vite/Netlify/Vercel
+            // @ts-ignore
+            if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) {
+                apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+            } 
+            // 2. Tenta pegar de process.env (Node/Build environments)
+            // @ts-ignore
+            else if (typeof process !== 'undefined' && process.env) {
+                apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.API_KEY || apiKey;
+            }
+        } catch (e) {
+            console.log("Aguardando configuração de chave de API.");
+        }
+
+        const genAI = new GoogleGenAI({ apiKey: apiKey });
+
+        // Função auxiliar para chamadas de API com fallback de modelo
+        async function safeGenerateContent(prompt, isJson = true) {
+            if (apiKey === "YOUR_API_KEY_HERE" || !apiKey) {
+                throw new Error("API_KEY_MISSING");
+            }
+
+            const models = ["gemini-3-flash-preview", "gemini-1.5-flash"];
+            let lastError = null;
+
+            for (const modelName of models) {
+                try {
+                    const response = await genAI.models.generateContent({
+                        model: modelName,
+                        contents: prompt,
+                        config: isJson ? { responseMimeType: "application/json" } : {}
+                    });
+                    return response;
+                } catch (e) {
+                    console.warn(`Falha com o modelo ${modelName}, tentando próximo...`);
+                    lastError = e;
+                }
+            }
+            throw lastError;
+        }
+
+        // Shofar Sound Logic
+        const shofarAudio = document.getElementById('shofar-audio');
+        
+        window.playShofar = function() {
+            if (shofarAudio) {
+                shofarAudio.volume = 1.0; // Maximum volume
+                shofarAudio.currentTime = 0; // Restart if already playing
+                shofarAudio.play().catch(e => console.log("Audio play blocked by browser:", e));
+                
+                // Visual feedback
+                document.body.classList.add('shofar-active');
+                setTimeout(() => document.body.classList.remove('shofar-active'), 1000);
+            }
+        };
+
+        window.showView = function(viewId) {
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('devotional-view').classList.add('hidden');
+            document.getElementById('reading-view').classList.add('hidden');
+            document.getElementById('challenge-view').classList.add('hidden');
+            document.getElementById(viewId + '-view').classList.remove('hidden');
+            if (viewId === 'dashboard') {
+                document.getElementById('devotional-result').classList.add('hidden');
+                document.getElementById('devotional-theme').value = '';
+                document.getElementById('reading-result').classList.add('hidden');
+                document.getElementById('challenge-result').classList.add('hidden');
+            }
+        };
+
+        window.startDailyReading = async function() {
+            showView('reading');
+            playShofar();
+            const loading = document.getElementById('reading-loading');
+            const result = document.getElementById('reading-result');
+            
+            loading.classList.remove('hidden');
+            result.classList.add('hidden');
+
+            try {
+                const prompt = `
+                    Gere uma "Leitura Bíblica Diária" profunda e inspiradora.
+                    Escolha um texto bíblico significativo (pode ser um capítulo curto ou um conjunto de versículos).
+                    O conteúdo deve ser estruturado EXATAMENTE no seguinte formato JSON:
+                    {
+                      "referencia": "Referência Bíblica (ex: Salmos 23)",
+                      "texto_biblico": "O texto bíblico completo da passagem",
+                      "ensino": "Uma explicação teológica e profunda do texto",
+                      "aplicacao": "Como aplicar este ensino na vida pessoal hoje",
+                      "chamada_acao": "Um desafio prático e imediato para o leitor",
+                      "oracao": "Uma oração baseada no texto lido"
+                    }
+                    Responda APENAS com o JSON.
+                `;
+
+                const response = await safeGenerateContent(prompt);
+                const data = JSON.parse(response.text.replace(/```json|```/g, '').trim());
+                renderReading(data);
+                loading.classList.add('hidden');
+                result.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                if (error.message === "API_KEY_MISSING") {
+                    loading.innerHTML = `
+                        <div class="text-orange-400 p-6 border border-orange-400/20 rounded-2xl bg-orange-400/5 text-sm">
+                            <b class="text-lg block mb-2">Configuração Necessária no Cloudflare:</b>
+                            <p class="mb-4">A chave de API não foi detectada. Siga estes passos no seu painel:</p>
+                            <ol class="text-left list-decimal pl-5 space-y-2 mb-4">
+                                <li>Vá em <b>Settings > Environment Variables</b>.</li>
+                                <li>Adicione a variável <b>VITE_GEMINI_API_KEY</b>.</li>
+                                <li>Salve e faça um <b>Redeploy</b> do projeto.</li>
+                            </ol>
+                            <p class="text-xs opacity-70 italic text-center">O prefixo VITE_ é obrigatório para segurança.</p>
+                        </div>
+                    `;
+                } else {
+                    loading.innerHTML = '<p class="text-red-400">Erro ao carregar leitura. Verifique sua chave de API ou conexão.</p>';
+                }
+            }
+        };
+
+        window.startBibleChallenge = async function() {
+            showView('challenge');
+            playShofar();
+            const loading = document.getElementById('challenge-loading');
+            const result = document.getElementById('challenge-result');
+            
+            loading.classList.remove('hidden');
+            result.classList.add('hidden');
+
+            try {
+                const prompt = `
+                    Gere um "Desafio Bíblico" prático e espiritual para o dia de hoje.
+                    O desafio deve ser algo que o usuário possa realizar para crescer em sua fé e servir ao próximo.
+                    O conteúdo deve ser estruturado EXATAMENTE no seguinte formato JSON:
+                    {
+                      "titulo": "Título do Desafio",
+                      "versiculo_base": "Versículo bíblico que inspira o desafio",
+                      "missao": "Descrição detalhada do desafio prático",
+                      "por_que": "A motivação espiritual por trás deste desafio",
+                      "recompensa_espiritual": "O que o usuário ganha espiritualmente ao realizar este desafio"
+                    }
+                    Responda APENAS com o JSON.
+                `;
+
+                const response = await safeGenerateContent(prompt);
+                const data = JSON.parse(response.text.replace(/```json|```/g, '').trim());
+                renderChallenge(data);
+                loading.classList.add('hidden');
+                result.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                if (error.message === "API_KEY_MISSING") {
+                    loading.innerHTML = '<p class="text-orange-400 p-4 border border-orange-400/20 rounded-xl"><b>Configuração Necessária:</b><br>Chave de API ausente. Configure <b>VITE_GEMINI_API_KEY</b> no seu painel de deploy.</p>';
+                } else {
+                    loading.innerHTML = '<p class="text-red-400">Erro ao carregar desafio. Tente novamente.</p>';
+                }
+            }
+        };
+
+        function renderChallenge(data) {
+            const resultDiv = document.getElementById('challenge-result');
+            resultDiv.innerHTML = `
+                <header class="text-center py-10 px-6 bg-black rounded-3xl shadow-2xl border-2 border-emerald-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500 opacity-10 rounded-full -mr-16 -mt-16"></div>
+                    <p class="text-emerald-500 font-bold tracking-widest uppercase text-sm mb-2">Desafio Bíblico do Dia</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white font-serif leading-tight relative z-10">${data.titulo}</h2>
+                </header>
+
+                <div class="bg-neutral-900 p-8 rounded-3xl shadow-xl border border-neutral-800 mb-8">
+                    <p class="text-emerald-500 font-bold mb-2 uppercase tracking-widest text-xs">Versículo Base</p>
+                    <p class="text-xl italic font-serif text-white mb-4">"${data.versiculo_base}"</p>
+                    
+                    <div class="h-px w-full bg-neutral-800 my-6"></div>
+                    
+                    <p class="text-emerald-500 font-bold mb-2 uppercase tracking-widest text-xs">Sua Missão</p>
+                    <p class="text-gray-200 leading-relaxed text-xl font-bold">
+                        ${data.missao}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-neutral-900 p-6 rounded-2xl border border-neutral-800">
+                        <h4 class="text-emerald-500 font-bold uppercase tracking-wider text-sm mb-3">O Propósito</h4>
+                        <p class="text-gray-300 leading-relaxed">${data.por_que}</p>
+                    </div>
+
+                    <div class="bg-neutral-900 p-6 rounded-2xl border border-emerald-500/20">
+                        <h4 class="text-white font-bold uppercase tracking-wider text-sm mb-3">Fruto Espiritual</h4>
+                        <p class="text-gray-300 leading-relaxed italic">${data.recompensa_espiritual}</p>
+                    </div>
+                </div>
+                
+                <div class="text-center py-10">
+                    <button onclick="showView('dashboard')" class="px-8 py-3 bg-emerald-600 text-white rounded-full hover:bg-emerald-500 transition-all shadow-lg">
+                        Aceito o Desafio
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderReading(data) {
+            const resultDiv = document.getElementById('reading-result');
+            resultDiv.innerHTML = `
+                <header class="text-center py-10 px-6 bg-black rounded-3xl shadow-2xl border-2 border-orange-vibrant relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-32 h-32 bg-orange-vibrant opacity-10 rounded-full -ml-16 -mt-16"></div>
+                    <p class="text-orange-vibrant font-bold tracking-widest uppercase text-sm mb-2">Leitura Bíblica Diária</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white font-serif leading-tight relative z-10">${data.referencia}</h2>
+                </header>
+
+                <div class="bg-neutral-900 p-8 rounded-3xl shadow-xl border border-neutral-800 mb-8">
+                    <div class="flex items-center mb-6">
+                        <span class="text-orange-vibrant mr-3 p-2 bg-orange-vibrant/10 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-bold text-white font-serif">O Texto Sagrado</h3>
+                    </div>
+                    <div class="text-gray-200 leading-relaxed text-xl font-serif italic bg-black/30 p-6 rounded-2xl border-l-4 border-orange-vibrant">
+                        ${data.texto_biblico}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="bg-neutral-900 p-6 rounded-2xl border border-neutral-800">
+                        <h4 class="text-gold font-bold uppercase tracking-wider text-sm mb-3 flex items-center">
+                            <span class="w-2 h-2 bg-gold rounded-full mr-2"></span> Ensino
+                        </h4>
+                        <p class="text-gray-300 leading-relaxed">${data.ensino}</p>
+                    </div>
+
+                    <div class="bg-neutral-900 p-6 rounded-2xl border border-neutral-800">
+                        <h4 class="text-orange-vibrant font-bold uppercase tracking-wider text-sm mb-3 flex items-center">
+                            <span class="w-2 h-2 bg-orange-vibrant rounded-full mr-2"></span> Aplicação Pessoal
+                        </h4>
+                        <p class="text-gray-300 leading-relaxed">${data.aplicacao}</p>
+                    </div>
+
+                    <div class="bg-neutral-900 p-6 rounded-2xl border border-neutral-800">
+                        <h4 class="text-white font-bold uppercase tracking-wider text-sm mb-3 flex items-center">
+                            <span class="w-2 h-2 bg-white rounded-full mr-2"></span> Chamada para Ação
+                        </h4>
+                        <p class="text-gray-300 leading-relaxed font-bold">${data.chamada_acao}</p>
+                    </div>
+
+                    <div class="bg-neutral-900 p-6 rounded-2xl border border-gold/20 italic">
+                        <h4 class="text-gold font-bold uppercase tracking-wider text-sm mb-3 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                            </svg>
+                            Oração
+                        </h4>
+                        <p class="text-gray-400">${data.oracao}</p>
+                    </div>
+                </div>
+                
+                <div class="text-center py-10">
+                    <button onclick="showView('dashboard')" class="px-8 py-3 bg-neutral-800 text-white rounded-full hover:bg-neutral-700 transition-all border border-neutral-700">
+                        Concluir Leitura de Hoje
+                    </button>
+                </div>
+            `;
+        }
+
+        window.openShema = function() {
+            playShofar(); // Play sound when opening Shema
+            document.getElementById('shema-modal').classList.remove('hidden');
+            document.getElementById('shema-question').value = '';
+            document.getElementById('shema-answer-container').classList.add('hidden');
+        };
+
+        window.closeShema = function() {
+            document.getElementById('shema-modal').classList.add('hidden');
+        };
+
+        window.generateDevotional = async function() {
+            const theme = document.getElementById('devotional-theme').value;
+            const errorMsg = document.getElementById('error-msg');
+            const btnText = document.getElementById('btn-text');
+            const btnLoader = document.getElementById('btn-loader');
+            const resultDiv = document.getElementById('devotional-result');
+
+            if (!theme.trim()) {
+                errorMsg.innerText = 'Por favor, insira um tema.';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            playShofar();
+            errorMsg.classList.add('hidden');
+            btnText.innerText = 'Buscando...';
+            btnLoader.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+
+            try {
+                const prompt = `
+                    Você é um escritor cristão sênior da Missio Dei.
+                    Gere um conteúdo devocional para o tema: "${theme}".
+                    O conteúdo deve ser estruturado EXATAMENTE no seguinte formato JSON:
+                    {
+                      "titulo": "Título impactante",
+                      "versiculo": {
+                        "texto": "Texto do versículo",
+                        "referencia": "Referência"
+                      },
+                      "reflexao": "Reflexão profunda",
+                      "aplicacao": "Aplicação prática",
+                      "oracao": "Oração",
+                      "frase": "Frase de impacto",
+                      "acao": "Desafio"
+                    }
+                `;
+
+                const response = await safeGenerateContent(prompt);
+                const data = JSON.parse(response.text.replace(/```json|```/g, '').trim());
+                renderDevotional(data);
+                resultDiv.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                if (error.message === "API_KEY_MISSING") {
+                    errorMsg.innerHTML = '<b>Configuração Necessária:</b> Chave de API ausente. Configure <b>VITE_GEMINI_API_KEY</b> no seu painel.';
+                } else {
+                    errorMsg.innerText = 'Erro ao gerar devocional. Verifique sua chave de API.';
+                }
+                errorMsg.classList.remove('hidden');
+            } finally {
+                btnText.innerText = 'Gerar Devocional';
+                btnLoader.classList.add('hidden');
+            }
+        };
+
+        function renderDevotional(data) {
+            const resultDiv = document.getElementById('devotional-result');
+            resultDiv.innerHTML = `
+                <header class="text-center py-10 px-6 bg-black rounded-3xl shadow-2xl border-2 border-neutral-800 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gold opacity-10 rounded-full -mr-16 -mt-16"></div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white font-serif leading-tight relative z-10">${data.titulo}</h2>
+                </header>
+                
+                <div class="bg-neutral-900 p-6 md:p-8 rounded-2xl shadow-xl border border-neutral-800 mb-6">
+                    <div class="flex items-center mb-4">
+                        <span class="text-gold mr-3 p-2 bg-gold/10 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-bold text-white font-serif">Versículo do Dia</h3>
+                    </div>
+                    <blockquote class="border-l-4 border-gold pl-6 py-2">
+                        <p class="text-xl italic font-serif text-white">"${data.versiculo.texto}"</p>
+                        <cite class="block text-right mt-4 not-italic font-bold text-gold tracking-wider uppercase text-sm">${data.versiculo.referencia}</cite>
+                    </blockquote>
+                </div>
+
+                <div class="bg-neutral-900 p-6 md:p-8 rounded-2xl shadow-xl border border-neutral-800 mb-6">
+                    <div class="flex items-center mb-4">
+                        <span class="text-gold mr-3 p-2 bg-gold/10 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.674a1 1 0 00.922-.617l2.108-5.271A1 1 0 0016.445 10H3.555a1 1 0 00-.922 1.112l2.108 5.271a1 1 0 00.922.617z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 22V10M12 2v4M4.93 4.93l2.83 2.83M19.07 4.93l-2.83 2.83" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-bold text-white font-serif">Reflexão</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed text-lg whitespace-pre-line">${data.reflexao}</p>
+                </div>
+
+                <div class="bg-neutral-900 p-6 md:p-8 rounded-2xl shadow-xl border border-neutral-800 mb-6">
+                    <div class="flex items-center mb-4">
+                        <span class="text-gold mr-3 p-2 bg-gold/10 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-bold text-white font-serif">Aplicação Prática</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed text-lg">${data.aplicacao}</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-vibrant to-gold text-white p-10 rounded-3xl shadow-2xl text-center my-10 border-b-8 border-black">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mx-auto mb-4 opacity-50" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14.017 21L14.017 18C14.017 16.8954 13.1216 16 12.017 16C10.9124 16 10.017 16.8954 10.017 18L10.017 21H4.01703V11C4.01703 10.4477 4.46474 10 5.01703 10H19.017C19.5693 10 20.017 10.4477 20.017 11V21H14.017Z" />
+                    </svg>
+                    <p class="text-2xl italic font-serif leading-relaxed">"${data.frase}"</p>
+                </div>
+
+                <div class="bg-neutral-900 p-6 md:p-8 rounded-2xl shadow-xl border border-neutral-800 mb-6">
+                    <div class="flex items-center mb-4">
+                        <span class="text-gold mr-3 p-2 bg-gold/10 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-bold text-white font-serif">Momento de Oração</h3>
+                    </div>
+                    <p class="italic text-gray-400 bg-black/40 p-4 rounded-xl border-l-2 border-gold/30">${data.oracao}</p>
+                </div>
+
+                <div class="bg-gold/5 p-6 md:p-8 rounded-2xl shadow-xl border-2 border-gold/20 mb-6">
+                    <div class="flex items-center mb-4">
+                        <span class="text-gold mr-3 p-2 bg-gold/10 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-bold text-white font-serif">Desafio do Dia</h3>
+                    </div>
+                    <p class="font-bold text-white text-xl">${data.acao}</p>
+                </div>
+            `;
+        }
+
+        window.askShema = async function() {
+            const question = document.getElementById('shema-question').value;
+            const btnText = document.getElementById('shema-btn-text');
+            const btnLoader = document.getElementById('shema-btn-loader');
+            const answerContainer = document.getElementById('shema-answer-container');
+            const answerDiv = document.getElementById('shema-answer');
+
+            if (!question.trim()) return;
+
+            playShofar();
+            btnText.innerText = '';
+            btnLoader.classList.remove('hidden');
+            answerContainer.classList.add('hidden');
+
+            try {
+                const prompt = `
+                    Você é o "Shemá", um assistente espiritual sábio e acolhedor da Missio Dei. 
+                    Sua missão é responder perguntas sobre fé, vida cristã e o propósito de Deus com base nos princípios bíblicos.
+                    Pergunta do usuário: "${question}"
+                    Responda de forma pastoral, profunda e encorajadora.
+                `;
+
+                const response = await safeGenerateContent(prompt, false);
+                answerDiv.innerText = response.text;
+                answerContainer.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                if (error.message === "API_KEY_MISSING") {
+                    answerDiv.innerText = 'Configuração Necessária: Chave de API ausente no painel de deploy (VITE_GEMINI_API_KEY).';
+                } else {
+                    answerDiv.innerText = 'O Shemá está em silêncio no momento. Verifique sua chave de API ou tente mais tarde.';
+                }
+                answerContainer.classList.remove('hidden');
+            } finally {
+                btnText.innerText = 'Perguntar ao Shemá';
+                btnLoader.classList.add('hidden');
+            }
+        };
+
+        document.getElementById('year').innerText = new Date().getFullYear();
+    </script>
+</body>
+</html>
